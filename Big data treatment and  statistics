@@ -1,1 +1,35 @@
+# Load the required libraries
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(caret)
 
+# Load the data
+data <- read.csv("mydata.csv")
+
+# Clean the data
+data_cleaned <- data %>%
+  select(-c(column_to_drop1, column_to_drop2)) %>%  # Drop unnecessary columns
+  drop_na()  # Remove rows with missing values
+
+# Perform exploratory data analysis
+ggplot(data_cleaned, aes(x=variable1, y=variable2)) +
+  geom_point() +
+  labs(title="Scatter Plot of Variable1 vs Variable2", x="Variable1", y="Variable2")
+
+# Perform statistical analysis
+correlation_matrix <- cor(data_cleaned)
+heatmap(correlation_matrix)
+
+# Split the data into training and testing sets
+set.seed(123)
+training_indices <- createDataPartition(data_cleaned$target_variable, p=0.7, list=FALSE)
+training_data <- data_cleaned[training_indices, ]
+testing_data <- data_cleaned[-training_indices, ]
+
+# Build a machine learning model using cross-validation
+model <- train(target_variable ~., data=training_data, method="randomForest")
+predictions <- predict(model, testing_data)
+
+# Evaluate the model's performance
+confusionMatrix(predictions, testing_data$target_variable)
