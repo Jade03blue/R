@@ -1,1 +1,14 @@
+# Load the required libraries
+library(tidyverse)
 
+# Load the data (example data found online)
+data <- read.csv("https://raw.githubusercontent.com/edcarlson/hazardous-pesticide-data/master/data.csv")
+
+# Filter the data to only include alternative pesticides
+alternative_data <- data %>%
+  filter(Classification == "Alternative")
+
+# Create a histogram of the number of studies mentioning each alternative pesticide
+ggplot(alternative_data, aes(x=Pesticide)) +
+  geom_histogram(stat="count") +
+  labs(title="Number of Scientific Studies Mentioning Pesticide Alternatives", x="Alternative Pesticide", y="Number of Studies")
